@@ -1,4 +1,4 @@
-module.exports = function init(groupAddress){
+module.exports = function init(groupAddress, PORT){
     var dgram = require('dgram');
 
     var server = dgram.createSocket({
@@ -6,11 +6,11 @@ module.exports = function init(groupAddress){
         reuseAddr: true
     });
 
-    server.bind();
-
-    server.setBroadcast(true);
-    server.setMulticastTTL(128);
-    server.addMembership(groupAddress);
+    server.bind(PORT,function(){
+        server.setBroadcast(true);
+        server.setMulticastTTL(128);
+        server.addMembership(groupAddress);
+    });
 
     return server;
 }
