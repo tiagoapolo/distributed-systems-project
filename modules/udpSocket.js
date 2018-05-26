@@ -13,18 +13,18 @@ module.exports = class UdpSocket{
         this.socket = socket;
     }
 
-    get host(){
+    get getHost(){
         return this.host;
     }
 
-    get port(){
+    get getPort(){
         return this.port;
     }
 
     send(msg){
         let message = new Buffer(msg);
         
-        this.socket.send(message,this.port(),this.host(),(err) => {
+        this.socket.send(message,this.getPort(),this.getHost(),(err) => {
             this.socket.close()
         });
     }
