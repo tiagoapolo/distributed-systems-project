@@ -1,10 +1,25 @@
-module.exports = class UdpSocket{
-    constructor(HOST,PORT){
-        let dgram = require('dgram');
+const EventEmitter = require('events')
 
+module.exports = class UdpSocket extends EventEmitter {
+    
+    constructor(HOST,PORT){
+
+        super()
+
+        let dgram = require('dgram');
         let socket = dgram.createSocket('udp4');
 
-        socket.bind(PORT);
+        socket.on('message', (msg, rinfo) => {
+            console.log(`Socket got message from: ${rinfo.address}:${rinfo.port}`);
+            this.emit('message', msg.toString('ascii'))
+        });
+
+        socket.on('listening', () => {
+            const address = socket.address();
+            console.log(`Socket listening ${address.address}:${address.port}`);
+        });
+
+        socket.bind(PORT)
 
         this.host = HOST;
 
@@ -21,10 +36,10 @@ module.exports = class UdpSocket{
         return this.port;
     }
 
-    send(msg){
+    send(msg, host, port){
         let message = new Buffer(msg);
         
-        this.socket.send(message,this.getPort(),this.getHost(),(err) => {
+        this.socket.send(message, port, host,(err) => {
             this.socket.close()
         });
     }
