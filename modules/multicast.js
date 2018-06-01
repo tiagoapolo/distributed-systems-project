@@ -1,7 +1,12 @@
-module.exports = class Multicast{
+const EventEmitter = require('events')
+const util = require('util')
+
+module.exports = class Multicast extends EventEmitter {
     
     constructor(groupIpAddress, PORT){
-        
+    
+        super()
+
         this.groupAddress = groupIpAddress;
         this.port = PORT
         let dgram = require('dgram');
@@ -19,10 +24,10 @@ module.exports = class Multicast{
         
         this.server = server;
         
-        // @todo: Definir uma maneira de definir a ação deste evento fora do módulo
         this.server.on('message',(msg,info) => {
-            console.log(msg.toString('ascii'));
+            this.emit('message', msg.toString('ascii'))       
         })
+        
     }
 
     get getServer(){
