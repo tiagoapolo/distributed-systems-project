@@ -4,10 +4,16 @@ var RingElection = require('../modules/ring-election')
 
 
 // let udp = new udpSocket('127.0.0.1', 8088)
-let ring = new RingElection(1233)
+let ring = new RingElection(3)
 // ring.callElection()
+
+ring.on('election', (msg) => {
+    ring.callElection()
+})
+
+
 
 
 setInterval(() => {
-    console.log(ring.getMembers())
+    console.log(ring.leader)
 }, 2000)

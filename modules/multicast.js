@@ -26,6 +26,8 @@ module.exports = class Multicast extends EventEmitter {
 
         
         this.server = server;
+
+
         
         this.server.on('message',(msg,info) => {  
             
@@ -40,6 +42,9 @@ module.exports = class Multicast extends EventEmitter {
 
             } else if (msg && msg.indexOf('ELECTION') >= 0){
                 this.emit('election', msg.toString('ascii'), info)
+
+            } else if (msg && msg.indexOf('LEADER') >= 0) {
+                this.emit('leader', msg.toString('ascii'), info)
 
             } else {
                 this.emit('message', msg.toString('ascii'), info)    
@@ -75,6 +80,10 @@ module.exports = class Multicast extends EventEmitter {
     
     send(msg){
         let message = new Buffer(msg);
+
+        if(globals.verbose)
+            console.log(`\n------\n==> MULTICAST\n==> MESSAGE: ${msg}\n==> SENDING: ${this.groupAddress}:${this.port}\n------\n`)
+
         
         this.server.send(message,this.port,this.groupAddress,(err) => {
             if(err)
