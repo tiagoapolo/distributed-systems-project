@@ -43,12 +43,15 @@ module.exports = class Multicast extends EventEmitter {
             } else if (msg && msg.indexOf('ELECTION') >= 0){
                 this.emit('election', msg.toString('ascii'), info)
 
+            } else if (msg && msg.indexOf('LEADERWHO') >= 0){
+                this.emit('leaderwho', msg, info)           
+
             } else if (msg && msg.indexOf('LEADER') >= 0) {
                 this.emit('leader', msg.toString('ascii'), info)
 
             } else {
                 this.emit('message', msg.toString('ascii'), info)    
-            }            
+            }         
         })
         
     }

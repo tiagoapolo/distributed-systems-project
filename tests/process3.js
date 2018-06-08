@@ -7,13 +7,9 @@ var RingElection = require('../modules/ring-election')
 let ring = new RingElection(3)
 // ring.callElection()
 
+ring.leaderWho()
+
 ring.on('election', (msg) => {
     ring.callElection()
 })
 
-
-
-
-setInterval(() => {
-    console.log(ring.leader)
-}, 2000)

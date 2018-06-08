@@ -12,7 +12,7 @@ module.exports = (object, onChange) => {
         },
         defineProperty(target, property, descriptor) {
 
-            console.log('\n==> defineProperty', { target: target, property: property, descriptor: descriptor })
+            // console.log('\n==> defineProperty', { target: target, property: property, descriptor: descriptor })
 
             if(property === 'length' && descriptor.value > 0) onChange(target[descriptor.value-1]);
             return Reflect.defineProperty(target, property, descriptor);

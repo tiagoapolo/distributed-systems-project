@@ -21,6 +21,9 @@ module.exports = class UdpSocket extends EventEmitter {
             } else if(msg && msg.indexOf('OK') >= 0) {
                 this.emit('ok', msg.toString('ascii'),info)
 
+            } else if (msg && msg.indexOf('PROCESS') >= 0){
+                this.emit('process', msg.toString('ascii'),info)
+
             } else {
                 this.emit('message', msg.toString('ascii'),info)
             }
