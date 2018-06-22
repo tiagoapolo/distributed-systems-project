@@ -35,7 +35,7 @@ const RingElection = class extends EventEmitter {
 
         this.multicast.on('leader', (leader, info) => {
             
-            this. leader = {}
+            this.leader = {}
             let splitted = leader.split(':')
             
             this.leader.id = parseInt(splitted[1])
@@ -45,19 +45,29 @@ const RingElection = class extends EventEmitter {
         })
 
         this.multicast.on('leaderwho', (msg, info) => {
-            console.log('\n\nCALLED WHOO')
             this.leader ? this.multicast.send('LEADER!:'+this.leader.id+':'+this.leader.address+':'+this.leader.port) : null
         })
 
-        this.socket.on('election', (msg, info) => {          
-            this.socket.send('OK', info.address, info.port)                
-            this.emit('election', msg)
+        this.socket.on('election', (msg, info) => {        
+            if(this.id % 2 === 0){
+                setTimeout(() => this.socket.send('OK', info.address, info.port), 2000)
+                this.emit('election', msg)
+            } else {
+                setTimeout(() => this.socket.send('OK', info.address, info.port), 3500)
+                this.emit('election', msg)
+            }
+            
         })
 
         this.socket.on('ok', (msg, info) => {
             this.membersObservable = null    
             this.members = []
-            clearTimeout(this.messageTimeout)                  
+
+            this.multicast.removeAllEvents('iam')
+            this.removeAllListeners('iam')
+
+            clearTimeout(this.messageTimeout)    
+
             this.emit('ok', msg)
         })
 
@@ -92,6 +102,7 @@ const RingElection = class extends EventEmitter {
 
         this.messageTimeout = setTimeout(() => {             
             this.leader = this.id; this.multicast.send('LEADER!:'+this.id+':'+this.socket.host+':'+this.socket.port); 
+            this.emit('incommand')
         }, electionTimeout)
 
         this.multicast.on('iam', (iam, info) => {
@@ -118,7 +129,9 @@ const RingElection = class extends EventEmitter {
         this.socket.send("PROCESS:"+JSON.stringify(object), this.leader.address, this.leader.port)
         console.log(`\n------\n==> WAITING RESPONSE\nFROM: ${this.leader.address}:${this.leader.port}\nTIMEOUT: ${messageTimeout} ms\n------\n`)
 
-        this.messageTimeout = setTimeout(() => { this.emit('election') }, messageTimeout)
+        this.messageTimeout = setTimeout(() => { 
+            this.emit('deliveryError')
+        }, messageTimeout)
     }
 
     leaderWho(){

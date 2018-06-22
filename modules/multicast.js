@@ -101,5 +101,10 @@ module.exports = class Multicast extends EventEmitter {
         })
     }
     
+
+    removeAllEvents(name){
+        this.removeAllListeners(name, () => {console.log('\n\n ==> REMOVEING!!!')})
+    }
+
 }
 
